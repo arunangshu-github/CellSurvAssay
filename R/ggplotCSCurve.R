@@ -32,7 +32,7 @@
 #' @export
 ggplotCSCurve <- function(data, ..., method = "ml", PEmethod = "fit", colors = NULL, title = NULL, xlab = "Doses (Gy)", ylab = "Survival (1 = 100%)",
                              legend_title = "Cell types", point_shape = 16, point_size = 2, segment_type = 1, segment_width = 1,
-                             curve_width = 1, curve_type = 1, theme = theme_bw(), ylim = NULL, ybreaks = waiver()) {
+                             curve_width = 1, curve_type = 1, theme = ggplot2::theme_bw(), ylim = NULL, ybreaks = ggplot2::waiver()) {
 
 
 
