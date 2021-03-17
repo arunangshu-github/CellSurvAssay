@@ -109,14 +109,14 @@ ggplotCSCurve <- function(data, ..., method = "ml", PEmethod = "fit", colors = N
 
 
   p <- ggplot2::ggplot(data = merged_df, ggplot2::aes(x = doses, y = pts, color = ctype)) +
-    geom_point(ggplot2::aes(x = doses, y = pts), shape = point_shape, size = point_size) +
-    geom_segment(ggplot2::aes(x = doses, xend = doses, y = pts_minus_sems, yend = pts_plus_sems), linetype = segment_type, size = segment_width) +
+    ggplot2::geom_point(ggplot2::aes(x = doses, y = pts), shape = point_shape, size = point_size) +
+    ggplot2::geom_segment(ggplot2::aes(x = doses, xend = doses, y = pts_minus_sems, yend = pts_plus_sems), linetype = segment_type, size = segment_width) +
     #geom_pointrange(aes(ymin = pts_minus_sems, ymax = pts_plus_sems), shape = point_shape, linetype = segment_type, size = segment_width) +
-    geom_line(data = df_sim, ggplot2::aes(y = y_hat, x = d, color = ctype), linetype = curve_type, size = curve_width) +
+    ggplot2::geom_line(data = df_sim, ggplot2::aes(y = y_hat, x = d, color = ctype), linetype = curve_type, size = curve_width) +
     #ylim(ylimits) +
-    scale_y_log10(limits = ylim, breaks = ybreaks) +
-    scale_color_manual(values = colors) +
-    labs(title = title, x = xlab, y = ylab, color = legend_title) +
+    ggplot2::scale_y_log10(limits = ylim, breaks = ybreaks) +
+    ggplot2::scale_color_manual(values = colors) +
+    ggplot2::labs(title = title, x = xlab, y = ylab, color = legend_title) +
     theme
   print(p)
 }
