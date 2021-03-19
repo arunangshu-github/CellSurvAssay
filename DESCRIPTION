@@ -6,6 +6,7 @@ Authors@R: c(
     person("Curtis", "Pickering", email = "email", role = "aut"))
 Description: Helps you to perform Cell Survival Analysis in R using the CFAssay package, even though you don't have an in-depth knowledge of R. It also goes beyond the CFAssay package and allows you to plot excellent Cell Survival plots using the popular ggplot function, as well as calculate the Dose Enhancement Ratio.
 License: ??
+biocViews:
 Imports: 
     BiocManager,
     CFAssay,
