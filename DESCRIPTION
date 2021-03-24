@@ -23,3 +23,7 @@ URL: https://github.com/arunangshu-github/CellSurvAssay
 BugReports: https://github.com/arunangshu-github/CellSurvAssay/issues
 Depends: 
     R (>= 2.10)
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

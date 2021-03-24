@@ -1,0 +1,176 @@
+---
+title: "CellSurvAssay"
+author: "<center> Arunangshu Sarkar <center><br>"
+date: "<center> _`r Sys.Date()`_ <center>"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{CellSurvAssay: Cell Survival Assay Made Easy!!!}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE
+)
+```
+
+```{r setup, echo=FALSE}
+library(CellSurvAssay)
+```
+
+# Purpose
+
+* The CellSurvAssay has been written around the R package CFAssay, which can be used for Cell Survival Assay analysis using R.
+* The purposes of this program are:
+    + to help you perform Clonogenic Analysis using R, even though if you have limited knowledge of R;
+    + to spare us from the different data wrangling steps required to do the analysis and plot the cell survival curves;
+    + to go beyond the CFAssay package and 
+        + plot the cell survival curves using ggplot(), and
+        + calculate the Dose Enhancement Ratio
+* This Vignette describes how to use the different functions present in the package to get the required results quickly and efficiently.
+* Additional resources:
+  + To know the details about the statistics: [CFAssay](https://bioconductor.org/packages/release/bioc/html/CFAssay.html)
+
+
+# Installing the package
+
+* The package is shared through GitHub right now.
+* The function `install_github()` is required to install it, which is a part of the `devtools` package
+* Following are the set of codes do install and load it in memory: 
+```{r eval=FALSE}
+install.packages("devtools") #install devtools, if not already done before
+library(devtools) #load devtools in memory
+install_github("arunangshu-github/CellSurvAssay") #install the package from GitHub
+library(CellSurvAssay) #load the package in memory
+```
+
+# Importing the data set
+
+* First, we have to import our data set in R.
+* It is important to note here that to successfully run the package, which is built around [CFAssay](https://bioconductor.org/packages/release/bioc/html/CFAssay.html), at least the following columns, with these exact names, should be present, which are the basic requirements of the package:
+    + "cline" - cell lines: distinguishes the curves in the data frame
+    + "Exp" - replicates: discriminates replicates within each curve
+    + "dose" - applied radiation dose
+    + "ncells" - no. of cells seeded
+    + "ncolonies" - no. of counted colonies
+  
+* The program contains a function `importData()`, which helps us in importing the data set.
+* To load a data set in R, we have to assign a name to it. Here, we use the name `datatab`.
+* Within the parentheses of the function, enter the file path within quotes, and then the type of file within quotes, separated by a comma:
+
+```{r eval=FALSE}
+datatab <- importData("path/to/file", "type of file")
+```
+
+* If the file is an excel file, just providing the file path along with its extension, within quotes, is sufficient. No file type is needed:
+
+```{r eval=FALSE}
+datatab <- importData("path/to/file.xlsx")
+```
+
+* If the file is not an excel file (eg. csv, tsv), then you have to specify the file type:
+
+```{r eval=FALSE}
+datatab <- importData("path/to/file.csv", filetype = "csv") #for a csv file
+datatab <- importData("path/to/file.tsv", filetype = "tsv") #for a tsv file
+```
+
+* If the file is a delimited file, then you can do this:
+
+```{r eval=FALSE}
+#for a '|' delimited file
+datatab <- importData("path/to/file", filetype = "txt", separator = "|")
+#for a tab delimited file
+datatab <- importData("path/to/file", filetype = "txt", separator = "\t")
+```
+  
+```{r echo=FALSE}
+data("CASP8_data")
+datatab <- CASP8_data
+```
+
+#### Other options
+
+* Other options that you may require to import the data can be used as well, all pertaining to the [read_csv, read_tsv and read_delim](https://readr.tidyverse.org/reference/read_delim.html) functions of the [readr](https://readr.tidyverse.org/index.html) package, or the [read_excel](https://readxl.tidyverse.org/reference/read_excel.html) function of the [readxl](https://readxl.tidyverse.org/index.html) package, all of which are a part of [tidyverse](https://www.tidyverse.org/).
+
+* Below are a few examples:
+
+```{r eval=FALSE}
+#to skip the first couple of rows
+datatab <- importData("path/to/file.xlsx", skip = 2)
+#if missing values are denoted by "-"
+datatab <- importData("path/to/file.xlsx", na = "-")
+```
+
+* Note here that `datatab` is the name given by us here to the data set that is imported in R. You can choose your own name, but if you do so, remember to use your given name in the analysis downstream.
+* If the file is loaded successfully, it should appear in the "Global Environment" of RStudio (top-right).
+* To check if it's successfully imported, or to view it, use the following command:
+
+```{r eval=FALSE}
+View(datatab)
+```
+
+# Fitting the Linear Quadratic Model
+
+* Now, we are ready to fit the linear quadratic model for an individual cell type. The `lqmodelFit()` function helps us do this.
+* Below is the command that can be used to fit a model. It prints the details of the fitted model.
+* Within the parentheses, first enter the name of your data set and then, within quotes, the cell type for which you want to fit the model, separated by a comma.
+```{r}
+lqmodelFit(datatab, "shCASP8-N")
+```
+
+* From the output, you will be able to know the alpha and beta values, and their p-values, among other statistics.
+* It's important to note here that the alpha and beta values generated by R will have the opposite signs. So, from the above results, the alpha and beta values for shCASP8-N are 0.0161308 and 0.03678049 respectively.
+
+#### Other options
+
+* If you want to change the default model fitting method to the "least squares" or "franken" method, do this:
+```{r eval=FALSE}
+lqmodelFit(datatab, "shCASP8-N", method = "franken")
+```
+
+* If you want to change the default plating efficiency method to "fix", do this:
+
+```{r eval=FALSE}
+lqmodelFit(datatab, "shCASP8-N", PEmethod = "fix")
+```
+
+# Plotting the Cell Survival curves using plot()
+
+* These are the curves plotted by the CFAssay package by default.
+
+## Individual curves
+
+* The function `plotCSCurve()` helps us plot both individual and multiple curves. Below is the simplest way to plot a curve of a single cell type.
+* Within the parentheses, first enter the name of your data set and then, within quotes, the cell type for which you want the curve, separated by a comma.
+```{r}
+plotCSCurve(datatab, "control-B")
+```
+
+#### Other options
+
+* If you want to change the default model fitting method to the "least squares" or "franken" method, do this:
+
+```{r eval=FALSE}
+plotCSCurve(datatab, "control-B", method = "franken")
+```
+
+* If you want to change the default plating efficiency method to "fix", do this:
+
+```{r eval=FALSE}
+plotCSCurve(datatab, "control-B", PEmethod = "fix")
+```
+
+## Multiple curves
+
+* The same function `plotCSCurve()` will help you plot multiple curves.
+* Instead of entering a single cell type, enter all the cell types you want the curves for, all separated by commas.
+```{r}
+plotCSCurve(datatab, "shCASP8-N", "shCASP8-B+Z+N", "control-B", "control-NT")
+```
+
+* You can change the model fitting method and plating efficiency method as mentioned above for individual curves.
