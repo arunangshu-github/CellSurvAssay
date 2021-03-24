@@ -20,9 +20,9 @@ ggplotCSCurve(
   segment_width = 1,
   curve_width = 1,
   curve_type = 1,
-  theme = theme_bw(),
+  theme = ggplot2::theme_bw(),
   ylim = NULL,
-  ybreaks = waiver()
+  ybreaks = ggplot2::waiver()
 )
 }
 \arguments{
