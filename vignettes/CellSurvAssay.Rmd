@@ -3,6 +3,8 @@ title: "CellSurvAssay"
 author: "<center> Arunangshu Sarkar <center><br>"
 date: "<center> _`r Sys.Date()`_ <center>"
 output: rmarkdown::html_vignette
+fontsize: 14pt
+geometry: margin = 1in
 vignette: >
   %\VignetteIndexEntry{CellSurvAssay: Cell Survival Assay Made Easy!!!}
   %\VignetteEngine{knitr::rmarkdown}
@@ -14,7 +16,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   echo = TRUE,
   warning = FALSE,
-  message = FALSE
+  message = FALSE,
 )
 ```
 
@@ -44,7 +46,7 @@ library(CellSurvAssay)
 ```{r eval=FALSE}
 install.packages("devtools") #install devtools, if not already done before
 library(devtools) #load devtools in memory
-install_github("arunangshu-github/CellSurvAssay") #install the package from GitHub
+install_github("arunangshu-github/CellSurvAssay", build_vignettes = TRUE) #install the package from GitHub
 library(CellSurvAssay) #load the package in memory
 ```
 
@@ -147,7 +149,7 @@ lqmodelFit(datatab, "shCASP8-N", PEmethod = "fix")
 
 * The function `plotCSCurve()` helps us plot both individual and multiple curves. Below is the simplest way to plot a curve of a single cell type.
 * Within the parentheses, first enter the name of your data set and then, within quotes, the cell type for which you want the curve, separated by a comma.
-```{r}
+```{r, fig.dim = c(8, 6)}
 plotCSCurve(datatab, "control-B")
 ```
 
@@ -169,7 +171,7 @@ plotCSCurve(datatab, "control-B", PEmethod = "fix")
 
 * The same function `plotCSCurve()` will help you plot multiple curves.
 * Instead of entering a single cell type, enter all the cell types you want the curves for, all separated by commas.
-```{r}
+```{r, fig.dim = c(8, 6)}
 plotCSCurve(datatab, "shCASP8-N", "shCASP8-B+Z+N", "control-B", "control-NT")
 ```
 
